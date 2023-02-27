@@ -49,11 +49,10 @@ workflows:
       - build
       - test:
           requires:
-            build
+            - build
       - analyze:
-
           requires:
-            test
+            - test
 
 
 
