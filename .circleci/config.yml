@@ -17,7 +17,7 @@ commands:
     steps:
       - run: echo << parameters.id >>
 jobs:
-  save_hello_world_output:
+  build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
@@ -25,15 +25,20 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - print_pipeline_id:
-          id: << pipeline.id >>
-      - run:
-          command: echo "this works" 
-      - run:
-          name: fail fast
-          command: echo "hello fail"
-          when: on_fail
+      -  run: echo "build done"
+    
+  test:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: echo "test done"
+  
 
+  analyze: 
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: echo "analyze done✅"
   
     
 # Invoke jobs via workflows
@@ -41,7 +46,14 @@ jobs:
 workflows:
   save_hello_world_output:
     jobs:
-      - save_hello_world_output
+      - build
+      - test:
+          requires:
+            build
+      - analyze:
+
+          requires:
+            test
 
 
 
